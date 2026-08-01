@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
 export default function CustomCursor() {
@@ -11,13 +11,18 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
 
   // High performance motion values
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  const cursorX = useMotionValue(-200);
+  const cursorY = useMotionValue(-200);
 
-  // Spring physics for ultra-smooth lag follow effect (60 FPS GPU accelerated)
-  const springConfig = { damping: 30, stiffness: 350, mass: 0.6 };
+  // Smooth physics
+  const springConfig = { damping: 28, stiffness: 300, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
+
+  // Subtle soft aura spring
+  const auraSpringConfig = { damping: 32, stiffness: 180, mass: 0.6 };
+  const auraXSpring = useSpring(cursorX, auraSpringConfig);
+  const auraYSpring = useSpring(cursorY, auraSpringConfig);
 
   useEffect(() => {
     // Hide default cursor on desktop
@@ -91,49 +96,49 @@ export default function CustomCursor() {
 
   if (!isVisible) return null;
 
-  // Render cursor representations based on active state
+  // Reduced subtle cursor styles
   const getCursorStyle = () => {
     switch (hoverState) {
       case "click":
         return {
-          width: 8,
-          height: 8,
-          backgroundColor: "#A78BFA",
-          borderColor: "#A78BFA",
+          width: 10,
+          height: 10,
+          backgroundColor: "rgba(236, 72, 153, 0.8)",
+          borderColor: "#EC4899",
           borderWidth: "1px",
         };
       case "hover":
         return {
-          width: 44,
-          height: 44,
-          backgroundColor: "rgba(167, 139, 250, 0.15)",
-          borderColor: "#A78BFA",
+          width: 36,
+          height: 36,
+          backgroundColor: "rgba(236, 72, 153, 0.12)",
+          borderColor: "#EC4899",
           borderWidth: "1.5px",
         };
       case "text":
         return {
-          width: 6,
-          height: 24,
+          width: 3,
+          height: 20,
           borderRadius: "2px",
-          backgroundColor: "#F0ABFC",
+          backgroundColor: "#F43F5E",
           borderColor: "transparent",
           borderWidth: "0px",
         };
       case "project":
         return {
-          width: 80,
-          height: 80,
-          backgroundColor: "rgba(96, 165, 250, 0.2)",
-          borderColor: "#60A5FA",
-          borderWidth: "2px",
+          width: 64,
+          height: 64,
+          backgroundColor: "rgba(244, 63, 94, 0.18)",
+          borderColor: "#F43F5E",
+          borderWidth: "1.5px",
         };
       case "default":
       default:
         return {
-          width: 18,
-          height: 18,
-          backgroundColor: "transparent",
-          borderColor: "rgba(167, 139, 250, 0.6)",
+          width: 16,
+          height: 16,
+          backgroundColor: "rgba(236, 72, 153, 0.05)",
+          borderColor: "rgba(236, 72, 153, 0.5)",
           borderWidth: "1.5px",
         };
     }
@@ -143,9 +148,20 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer Ring / Follower with physics */}
+      {/* Subtle Minimal Pink Glow Follower (Reduced size & opacity) */}
       <motion.div
-        className="fixed top-0 left-0 rounded-full pointer-events-none z-[10000] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 w-[150px] h-[150px] rounded-full bg-gradient-to-r from-pink-500/10 via-rose-500/05 to-transparent blur-[40px] pointer-events-none z-[9998] hidden md:block"
+        style={{
+          x: auraXSpring,
+          y: auraYSpring,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+      />
+
+      {/* Outer Ring Follower */}
+      <motion.div
+        className="fixed top-0 left-0 rounded-full pointer-events-none z-[10000] hidden md:block"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -159,14 +175,14 @@ export default function CustomCursor() {
           borderRadius: cursorStyle.borderRadius,
         }}
         animate={{
-          scale: hoverState === "click" ? 0.8 : 1,
+          scale: hoverState === "click" ? 0.85 : 1,
         }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
       />
 
-      {/* Inner Dot (Instant tracking) */}
+      {/* Inner Pink Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-purple-accent rounded-full pointer-events-none z-[10000] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-pink-500 rounded-full pointer-events-none z-[10000] hidden md:block"
         style={{
           x: cursorX,
           y: cursorY,
@@ -175,21 +191,21 @@ export default function CustomCursor() {
         }}
         animate={{
           opacity: hoverState === "text" || hoverState === "project" ? 0 : 1,
-          scale: hoverState === "click" ? 1.5 : 1,
+          scale: hoverState === "click" ? 1.4 : 1,
         }}
       />
 
       {/* Interactive indicator for projects */}
       {hoverState === "project" && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[10001] hidden md:flex items-center justify-center font-mono text-[9px] font-bold text-white tracking-widest uppercase"
+          className="fixed top-0 left-0 pointer-events-none z-[10001] hidden md:flex items-center justify-center font-mono text-[8px] font-bold text-white tracking-widest uppercase"
           style={{
             x: cursorXSpring,
             y: cursorYSpring,
             translateX: "-50%",
             translateY: "-50%",
-            width: 80,
-            height: 80,
+            width: 64,
+            height: 64,
           }}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}

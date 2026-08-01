@@ -18,7 +18,8 @@ import {
   Layers,
   Cpu,
   Code,
-  Terminal
+  Terminal,
+  ChevronDown
 } from "lucide-react";
 
 interface HeroProps {
@@ -36,27 +37,16 @@ const roles = [
 
 const tickerTechnologies = [
   { name: "React JS", icon: Layers },
-  { name: "Python", icon: Code },
-  { name: "Machine Learning", icon: Cpu },
-  { name: "MERN Stack", icon: Database },
-  { name: "Node JS", icon: Terminal },
+  { name: "Vue JS", icon: Layers },
   { name: "Tailwind CSS", icon: Sparkles },
-  { name: "SQL Databases", icon: Database },
+  { name: "Next JS", icon: Layers },
+  { name: "Node JS", icon: Terminal },
+  { name: "Python", icon: Code },
+  { name: "MERN Stack", icon: Database },
 ];
 
 export default function Hero({ onNavClick, onOpenResume, theme = "dark" }: HeroProps) {
   const [roleIndex, setRoleIndex] = useState(0);
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(() => {
-    return localStorage.getItem("pratiksha_profile_photo") || null;
-  });
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setProfilePhoto(localStorage.getItem("pratiksha_profile_photo") || null);
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
 
   // Carousel timer for rotating roles
   useEffect(() => {
@@ -66,27 +56,29 @@ export default function Hero({ onNavClick, onOpenResume, theme = "dark" }: HeroP
     return () => clearInterval(timer);
   }, []);
 
-  const fallbackPhoto = "/photo.png";
-  const finalPhoto = profilePhoto || fallbackPhoto;
+  const finalPhoto = "/photo.png?v=v3";
+
+  // Duplicate technologies list for seamless single-line continuous loop
+  const duplicatedTechnologies = useMemo(() => [...tickerTechnologies, ...tickerTechnologies, ...tickerTechnologies], []);
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden px-4 sm:px-6 md:px-8 select-none"
+      className="relative min-h-screen flex flex-col items-center justify-between pt-24 pb-0 overflow-hidden select-none"
     >
       {/* Background radial glowing gradients matching theme */}
       <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] rounded-full bg-pink-500/5 blur-[120px] -z-10 pointer-events-none animate-pulse-slow" />
       <div className="absolute bottom-[20%] right-[10%] w-[600px] h-[600px] rounded-full bg-rose-500/5 blur-[150px] -z-10 pointer-events-none animate-pulse-slow" style={{ animationDelay: "-3s" }} />
 
       {/* Hero Outer Container */}
-      <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-between z-10 gap-12">
+      <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-between px-4 sm:px-6 md:px-8 z-10 gap-4 mb-0">
 
         {/* Floating Hello World pill badge at the top */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex justify-center md:justify-start"
+          className="flex justify-center md:justify-start pt-2"
         >
           <div className="px-4 py-1.5 rounded-full border border-pink-500/15 bg-pink-500/5 backdrop-blur-md text-[10px] font-mono tracking-[0.3em] font-black uppercase flex items-center gap-2 text-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.1)]">
             <span className="inline-block animate-bounce">🌸</span>
@@ -95,10 +87,10 @@ export default function Hero({ onNavClick, onOpenResume, theme = "dark" }: HeroP
         </motion.div>
 
         {/* 2-Column Core Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center flex-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end flex-1">
 
           {/* Left Column: Copywriting & Actions */}
-          <div className="lg:col-span-7 flex flex-col text-center lg:text-left items-center lg:items-start gap-6">
+          <div className="lg:col-span-7 flex flex-col text-center lg:text-left items-center lg:items-start gap-6 pb-6">
 
             <div className="flex flex-col gap-2">
               <motion.span
@@ -181,13 +173,13 @@ export default function Hero({ onNavClick, onOpenResume, theme = "dark" }: HeroP
                 <ArrowUpRight className="w-4 h-4 text-pink-400" />
               </button>
 
-              {/* Horizontal Social Links capsule */}
+              {/* Horizontal Social Links capsule with branded GitHub & LinkedIn badges */}
               <div className="flex items-center gap-2.5 p-1.5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md self-center sm:self-auto justify-center">
                 <a
                   href="https://github.com/pratikshaa27"
                   target="_blank"
                   rel="noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/5 bg-white/5 hover:bg-pink-500/10 hover:border-pink-500/20 text-white/75 hover:text-pink-400 hover:scale-105 transition-all"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/10 bg-slate-900/90 text-white hover:bg-black hover:text-pink-400 hover:scale-110 shadow-sm transition-all"
                   title="GitHub Profile"
                 >
                   <Github className="w-4 h-4" />
@@ -196,89 +188,123 @@ export default function Hero({ onNavClick, onOpenResume, theme = "dark" }: HeroP
                   href="https://www.linkedin.com/in/pratiksha-khandbahale-005b39256/"
                   target="_blank"
                   rel="noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/5 bg-white/5 hover:bg-pink-500/10 hover:border-pink-500/20 text-white/75 hover:text-pink-400 hover:scale-105 transition-all"
+                  className="w-9 h-9 rounded-xl flex items-center justify-center border border-[#0A66C2]/40 bg-[#0A66C2] text-white hover:bg-[#084e96] hover:scale-110 shadow-sm transition-all"
                   title="LinkedIn Profile"
                 >
-                  <Linkedin className="w-4 h-4" />
+                  <Linkedin className="w-4 h-4 text-white fill-white" />
                 </a>
               </div>
 
             </motion.div>
 
+            {/* Animated Mouse & Arrow Scroll Down Motion Indicator */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              onClick={() => onNavClick("about")}
+              className="flex items-center gap-2.5 cursor-pointer group mt-4 pt-2 z-10"
+            >
+              <div className="w-4 h-7 rounded-full border border-white/30 group-hover:border-pink-400/60 flex justify-center p-0.5 transition-colors relative shadow-[0_0_10px_rgba(236,72,153,0.15)]">
+                <motion.div
+                  className="w-0.5 h-1.5 bg-pink-400 rounded-full"
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </div>
+              <span className="text-[10px] font-mono tracking-[0.25em] text-white/50 group-hover:text-pink-400 uppercase transition-colors flex items-center gap-1">
+                Scroll Down <ChevronDown className="w-3.5 h-3.5 text-pink-400 animate-bounce" />
+              </span>
+            </motion.div>
+
           </div>
 
-          {/* Right Column: Frameless Neon Pink Glowing Portrait Silhouette */}
-          <div className="lg:col-span-5 flex items-center justify-center relative">
+          {/* Right Column: Portrait Silhouette TOUCHING the skills line banner directly */}
+          <div className="lg:col-span-5 flex items-end justify-center lg:justify-end relative self-end mt-auto h-full z-10">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-              className="relative w-full max-w-[280px] sm:max-w-[330px] aspect-[4/5] flex items-center justify-center"
+              className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[400px] aspect-[4/5] flex items-end justify-center"
             >
-              {/* Vibrant Neon Pink Ambient Glow Aura */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-500/40 via-rose-500/30 to-pink-600/40 blur-3xl animate-pulse-slow pointer-events-none" />
+              {/* Soft Subtle Neon Pink Ambient Glow Aura */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-500/15 via-rose-500/10 to-pink-600/15 blur-2xl pointer-events-none" />
 
-              {/* Frameless Glowing Subject Portrait */}
+              {/* Subject Portrait sitting directly on top of top border of line */}
               <img
                 src={finalPhoto}
                 alt="Pratiksha Khandbahale Portrait"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
-                  e.currentTarget.src = "/photo.png";
+                  e.currentTarget.src = "/photo.png?v=v3";
                 }}
-                className="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_35px_rgba(236,72,153,0.75)] drop-shadow-[0_0_15px_rgba(244,63,94,0.5)] transition-transform duration-700 hover:scale-105"
+                className="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_12px_rgba(236,72,153,0.3)] transition-transform duration-700 hover:scale-105"
               />
             </motion.div>
           </div>
 
         </div>
 
-        {/* Bottom Technology Stack capsule horizontal ticker */}
+      </div>
+
+      {/* End of Hero Section: Strict 1-Line Infinite Moving Skills Marquee Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className={`w-full relative overflow-hidden py-4 border-y z-20 transition-colors duration-300 ${
+          theme === "light"
+            ? "bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 border-pink-400/40 shadow-[0_4px_25px_rgba(236,72,153,0.3)]"
+            : "bg-gradient-to-r from-[#3d021b] via-[#be185d] to-[#3d021b] border-pink-400/30 shadow-[0_4px_30px_rgba(236,72,153,0.35)]"
+        }`}
+      >
+        {/* Continuous Sweeping Light Beam Animation */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="w-full py-4 px-6 rounded-3xl bg-slate-950/40 border border-white/10 backdrop-blur-md flex flex-wrap justify-center sm:justify-between items-center gap-4 text-white"
-        >
-          <div className="flex items-center gap-2 shrink-0">
-            <Award className="w-4 h-4 text-pink-400 animate-bounce" />
-            <span className="text-[10px] font-mono tracking-widest font-extrabold uppercase text-white/50">CORE SYSTEM COMPETENCIES //</span>
-          </div>
+          className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none -skew-x-12 z-10"
+          animate={{ x: ["-100%", "350%"] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+        />
 
-          <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-5 text-xs font-semibold font-mono tracking-wide text-white/85">
-            {tickerTechnologies.map((tech, i) => {
-              return (
-                <div key={tech.name} className="flex items-center gap-3">
-                  {i > 0 && <span className="text-white/15 font-light">|</span>}
-                  <div className="flex items-center gap-2 hover:text-pink-400 transition-colors">
-                    <TechLogo name={tech.name} className="w-4 h-4 flex-shrink-0" />
-                    <span>{tech.name}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
+        {/* Side fade masks for ultra-smooth edge blending */}
+        <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#3d021b] to-transparent z-10 pointer-events-none opacity-50" />
+        <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#3d021b] to-transparent z-10 pointer-events-none opacity-50" />
 
-      </div>
-
-      {/* Mouse scroll down indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none z-10 hidden md:flex opacity-35">
-        <span className="text-[8px] font-mono tracking-[0.25em] text-white/45 uppercase">Scroll Down</span>
-        <div className="w-[14px] h-6 rounded-full border border-white/20 flex justify-center p-0.5">
+        {/* Strict 1-Line Horizontal Infinite Slider Container */}
+        <div className="w-full overflow-hidden flex items-center select-none">
           <motion.div
-            className="w-0.5 h-1 bg-pink-400 rounded-full"
-            animate={{
-              y: [0, 6, 0],
-            }}
+            className="flex items-center flex-nowrap whitespace-nowrap gap-8 sm:gap-14 min-w-max"
+            animate={{ x: ["0%", "-33.333%"] }}
             transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut",
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 20,
+                ease: "linear",
+              },
             }}
-          />
+          >
+            {duplicatedTechnologies.map((tech, i) => (
+              <div key={`${tech.name}-${i}`} className="flex items-center gap-8 sm:gap-14 flex-shrink-0">
+                <motion.div
+                  whileHover={{ scale: 1.12, y: -3 }}
+                  className="flex items-center gap-3 transition-all cursor-pointer group py-1 px-3 rounded-xl hover:bg-white/15"
+                >
+                  <motion.div
+                    whileHover={{ rotate: 18, scale: 1.25 }}
+                    transition={{ type: "spring", stiffness: 350, damping: 15 }}
+                  >
+                    <TechLogo name={tech.name} className="w-5 h-5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.9)]" />
+                  </motion.div>
+                  <span className="text-xs sm:text-sm font-extrabold tracking-wider uppercase !text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] group-hover:text-pink-100 transition-colors">
+                    {tech.name}
+                  </span>
+                </motion.div>
+                <span className="!text-white/40 font-light text-sm select-none">|</span>
+              </div>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
     </section>
   );

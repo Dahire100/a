@@ -101,15 +101,15 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                 
                 {/* Profile Circle representation on resume */}
                 <div className="space-y-4 text-center md:text-left print:text-left">
-                  <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center mx-auto md:mx-0 overflow-hidden bg-slate-900 print:w-20 print:h-20 print:border-black/10">
+                  <div className="w-24 h-24 rounded-full border-2 border-pink-500/40 shadow-[0_0_20px_rgba(236,72,153,0.3)] flex items-center justify-center mx-auto md:mx-0 overflow-hidden bg-slate-900 print:w-20 print:h-20 print:border-black/10">
                     <img
-                       src={profilePhoto || "/photo.png"}
+                      src={profilePhoto || "/photo.png?v=v3"}
                       alt="Pratiksha Khandbahale Portrait"
                       referrerPolicy="no-referrer"
                       onError={(e) => {
-                        e.currentTarget.src = "/photo.png";
+                        e.currentTarget.src = "/photo.png?v=v3";
                       }}
-                      className="w-full h-full object-cover object-top"
+                      className="w-full h-full object-cover object-top filter brightness-[1.05] contrast-[1.05]"
                     />
                   </div>
                   <div>
